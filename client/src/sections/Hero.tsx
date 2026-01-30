@@ -8,6 +8,7 @@ import Image from "next/image";
 import { easeInOut, motion, useAnimate } from "framer-motion";
 import { useEffect } from "react";
 import cursorYouImage from "@/assets/images/cursor-you.svg";
+import { SignInButton } from "@clerk/nextjs";
 
 export default function Hero() {
     const [leftDesignScope, leftDesignAnimate] = useAnimate();
@@ -163,14 +164,16 @@ export default function Hero() {
                             placeholder="Enter your email"
                             className="bg-transparent px-4 w-full"
                         />
-                        <Button
-                            type="submit"
-                            variant="primary"
-                            className="whitespace-nowrap"
-                            size="sm"
-                        >
-                            Book Now
-                        </Button>
+                        <SignInButton>
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                className="whitespace-nowrap"
+                                size="sm"
+                            >
+                                Book Now
+                            </Button>
+                        </SignInButton>
                     </form>
                 </motion.div>
             </div>

@@ -6,6 +6,7 @@ import Button from "@/components/Button";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { AnimatePresence, motion } from "framer-motion";
+import AuthModal from "@/components/AuthModal";
 
 const navLinks = [
     { label: "Home", href: "#" },
@@ -16,6 +17,18 @@ const navLinks = [
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
+
+    const openSignIn = () => {
+        setAuthMode("signin");
+        setIsModalOpen(true);
+    };
+
+    const openSignUp = () => {
+        setAuthMode("signup");
+        setIsModalOpen(true);
+    };
     return (
         <>
             <section className="py-4 lg:py-8 fixed w-full top-0 z-50">
@@ -87,13 +100,17 @@ export default function Navbar() {
                                         )}
                                     ></line>
                                 </svg>
+
                                 <Button
+                                    onClick={openSignIn}
                                     variant="secondary"
                                     className="hidden md:inline-flex items-center"
                                 >
                                     Login
                                 </Button>
+
                                 <Button
+                                    onClick={openSignUp}
                                     variant="primary"
                                     className="hidden md:inline-flex items-center"
                                 >
@@ -135,6 +152,16 @@ export default function Navbar() {
                 </div>
             </section>
             <div className="pb-[86px] md:pb-[98px] lg:pb-[130px]"></div>
+
+            <AuthModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                mode={authMode}
+                onSuccess={() => {
+                    console.log("Authentication successful");
+                }}
+                className=""
+            ></AuthModal>
         </>
     );
 }
