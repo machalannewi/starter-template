@@ -6,7 +6,7 @@ import Button from "@/components/Button";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { AnimatePresence, motion } from "framer-motion";
-import AuthModal from "@/components/AuthModal";
+import AuthModal from "@/components/auth/AuthModal";
 
 const navLinks = [
     { label: "Home", href: "#" },

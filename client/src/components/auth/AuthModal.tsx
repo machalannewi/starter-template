@@ -24,7 +24,7 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Spinner } from "./ui/spinner";
+import { Spinner } from "../ui/spinner";
 import { useRouter } from "next/navigation";
 
 interface AuthModalProps {
@@ -546,7 +546,7 @@ export default function AuthModal({
                                             <FieldDescription className="text-center text-gray-400 group">
                                                 Don&apos;t have an account?{" "}
                                                 <a
-                                                    href="#"
+                                                    href="/sign-up"
                                                     className="group-hover:text-lime-500"
                                                 >
                                                     Sign up

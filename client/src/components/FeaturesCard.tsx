@@ -12,7 +12,7 @@ export default function FeatureCard(props: {
             <div
                 className={twMerge(
                     "bg-neutral-900 border border-white/10 p-6 rounded-3xl",
-                    className
+                    className,
                 )}
             >
                 <div className="aspect-video">{children}</div>
