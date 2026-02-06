@@ -10,7 +10,9 @@ interface UseMapboxAutocompleteReturn {
 }
 
 export function useMapboxAutocomplete(
-    onSelect?: (place: MapboxFeature) => void
+    onSelect?: (place: MapboxFeature) => void,
+    userLocation?: [number, number] | null,
+    userCountry?: string | null
 ): UseMapboxAutocompleteReturn {
     const [query, setQuery] = useState<string>('');
     const [suggestions, setSuggestions] = useState<MapboxFeature[]>([]);
@@ -18,18 +20,15 @@ export function useMapboxAutocomplete(
     const abortControllerRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
-        // Don't search if query is too short
         if (query.length < 3) {
             setSuggestions([]);
             return;
         }
 
-        // Cancel previous request if still running
         if (abortControllerRef.current) {
             abortControllerRef.current.abort();
         }
 
-        // Create new abort controller for this request
         abortControllerRef.current = new AbortController();
 
         const searchPlaces = async (): Promise<void> => {
@@ -40,10 +39,31 @@ export function useMapboxAutocomplete(
                     throw new Error('Mapbox token is not configured');
                 }
 
-                const response = await fetch(
-                    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${token}&autocomplete=true&limit=5`,
-                    { signal: abortControllerRef.current!.signal }
-                );
+                let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${token}&autocomplete=true&limit=5`;
+                
+                if (userLocation) {
+                    // Add proximity to bias towards user location
+                    url += `&proximity=${userLocation[0]},${userLocation[1]}`;
+                    
+                    // Add bounding box - restrict to ~50km radius
+                    const offset = 0.5;
+                    const bbox = [
+                        userLocation[0] - offset,
+                        userLocation[1] - offset,
+                        userLocation[0] + offset,
+                        userLocation[1] + offset
+                    ].join(',');
+                    url += `&bbox=${bbox}`;
+                }
+                
+                // Add country filter if available
+                if (userCountry) {
+                    url += `&country=${userCountry}`;
+                }
+
+                const response = await fetch(url, { 
+                    signal: abortControllerRef.current!.signal 
+                });
                 
                 if (!response.ok) {
                     throw new Error(`Mapbox API error: ${response.status}`);
@@ -52,7 +72,6 @@ export function useMapboxAutocomplete(
                 const data: MapboxGeocodingResponse = await response.json();
                 setSuggestions(data.features || []);
             } catch (error) {
-                // Ignore abort errors
                 if (error instanceof Error && error.name !== 'AbortError') {
                     console.error('Error fetching suggestions:', error);
                     setSuggestions([]);
@@ -62,7 +81,6 @@ export function useMapboxAutocomplete(
             }
         };
 
-        // Debounce the search (wait 300ms after user stops typing)
         const timeoutId = setTimeout(searchPlaces, 300);
 
         return () => {
@@ -71,7 +89,7 @@ export function useMapboxAutocomplete(
                 abortControllerRef.current.abort();
             }
         };
-    }, [query]);
+    }, [query, userLocation, userCountry]);
 
     const selectPlace = (place: MapboxFeature): void => {
         setQuery(place.place_name);
