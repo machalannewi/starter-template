@@ -95,7 +95,12 @@ export default function SearchBox({
                 userCountry={userCountry}
             />
 
-            {route && !routeLoading && <CarOptions distance={route.distance} />}
+            {route && !routeLoading && (
+                <CarOptions
+                    location={route.location}
+                    distance={route.distance}
+                />
+            )}
         </section>
     );
 }

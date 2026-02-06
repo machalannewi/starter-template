@@ -8,8 +8,9 @@ interface RouteGeometry {
 
 interface RouteData {
     geometry: RouteGeometry;
-    distance: number; // in meters
-    duration: number; // in seconds
+    distance: number;
+    duration: number;
+    location: string;
 }
 
 export function useMapboxRoute(
@@ -47,10 +48,12 @@ export function useMapboxRoute(
                 const data = await response.json();
 
                 if (data.routes && data.routes.length > 0) {
+                    console.log(data)
                     setRoute({
                         geometry: data.routes[0].geometry as RouteGeometry,
                         distance: data.routes[0].distance,
                         duration: data.routes[0].duration,
+                        location: data.waypoints[1].name,
                     });
                 } else {
                     setError('No route found');
