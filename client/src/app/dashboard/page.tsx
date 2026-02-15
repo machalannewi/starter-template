@@ -3,6 +3,7 @@
 import Navbar from "@/components/dashboard/Navbar";
 import Mapbox from "@/components/dashboard/Mapbox";
 import SearchBox from "@/components/dashboard/SearchBox";
+import BottomNavigation from "@/components/dashboard/BottomNavigation";
 import { useState } from "react";
 import { MapboxFeature } from "@/types/mapbox";
 
@@ -29,6 +30,8 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            <BottomNavigation />
         </>
     );
 }
